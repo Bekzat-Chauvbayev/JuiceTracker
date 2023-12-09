@@ -15,13 +15,38 @@
  */
 package com.example.juicetracker.ui
 
+import android.media.Rating
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.juicetracker.R
 import com.example.juicetracker.data.Juice
+import com.example.juicetracker.data.JuiceColor
+import androidx.compose.material3.Text
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 
 
 class JuiceListAdapter(
@@ -41,6 +66,27 @@ class JuiceListAdapter(
             }
         }
     }
+@Composable
+fun JuiceIcon(color: String, modifier: Modifier = Modifier) {
+    val colorLabelMap = JuiceColor.values().associateBy { stringResource(it.label) }
+    val selectedColor = colorLabelMap[color]?.let { Color(it.color) }
+    val juiceIconContentDescription = stringResource(R.string.juice_color, color)
+
+
+    Box(
+        modifier.semantics {
+            contentDescription = juiceIconContentDescription
+        }
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_juice_color),
+            contentDescription = null,
+            tint = selectedColor ?: Color.Red,
+            modifier = Modifier.align(Alignment.Center)
+        )
+        Icon(painter = painterResource(R.drawable.ic_juice_clear), contentDescription = null)
+    }
+}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JuiceListViewHolder {
         return JuiceListViewHolder(
@@ -53,6 +99,30 @@ class JuiceListAdapter(
     override fun onBindViewHolder(holder: JuiceListViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
+
+
+@Composable
+fun JuiceDetails(juice: Juice, modifier: Modifier = Modifier){
+    Column(modifier, verticalArrangement = Arrangement.Top) {
+        Text(
+            text = juice.name,
+            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+        )
+        Text(juice.description)
+        RatingDisplay(rating = juice.rating, modifier = Modifier.padding(top = 8.dp))
+    }
+}
+
+@Composable
+fun RatingDisplay(rating: Int, modifier: Modifier = Modifier) {
+    val displayDescription = pluralStringResource(R.plurals.number_of_stars, count = rating)
+
+    Row(modifier.semantics { contentDescription  = displayDescription }){
+        repeat(rating){
+            Image(painter = painterResource(R.drawable.star), contentDescription =null, modifier = Modifier.size(32.dp) )
+        }
+
+    }
 }
 
 class JuiceDiffCallback : DiffUtil.ItemCallback<Juice>() {
@@ -63,4 +133,14 @@ class JuiceDiffCallback : DiffUtil.ItemCallback<Juice>() {
     override fun areContentsTheSame(oldItem: Juice, newItem: Juice): Boolean {
         return oldItem == newItem
     }
+}
+@Preview
+@Composable
+fun PreviewJuiceIcon() {
+    JuiceIcon("Yellow")
+}
+@Preview
+@Composable
+fun PreviewJuiceDetails() {
+    JuiceDetails(Juice(1, "Sweet Beet", "Apple, carrot, beet, and lemon", "Red", 4))
 }
