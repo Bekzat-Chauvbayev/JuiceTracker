@@ -50,7 +50,9 @@ fun ColorSpinnerRow(
 ) {
     val juiceColorArray = JuiceColor.values().map {
             juiceColor -> stringResource(juiceColor.label)
+
     }
+
     InputRow(inputLabel = stringResource(R.string.color), modifier = modifier) {
         AndroidView(
             modifier = Modifier.fillMaxWidth(),
@@ -70,4 +72,9 @@ fun ColorSpinnerRow(
             }
         )
     }
+
+}
+private fun findColorIndex(color: String): Int {
+    val juiceColor = JuiceColor.valueOf(color)
+    return JuiceColor.values().indexOf(juiceColor)
 }
