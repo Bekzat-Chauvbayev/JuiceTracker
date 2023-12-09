@@ -55,8 +55,17 @@ class JuiceListAdapter(
     private var onDelete: (Juice) -> Unit
 ) : ListAdapter<Juice, JuiceListAdapter.JuiceListViewHolder>(JuiceDiffCallback()) {
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JuiceListViewHolder {
+        return JuiceListViewHolder(
+            ComposeView(parent.context),
+            onEdit,
+            onDelete
+        )
+    }
 
-
+    override fun onBindViewHolder(holder: JuiceListViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
     class JuiceListViewHolder(
         private val composeView: ComposeView,
         private val onEdit: (Juice) -> Unit,
