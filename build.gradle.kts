@@ -23,6 +23,7 @@ buildscript {
         set("arch_lifecycle_version", "2.6.1")
     }
 }
+
 plugins {
     id("com.android.application") version "8.1.0" apply false
     id("com.android.library") version "8.1.0" apply false
